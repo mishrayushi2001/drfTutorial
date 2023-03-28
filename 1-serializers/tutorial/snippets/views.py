@@ -125,7 +125,7 @@ class SnippetDetail(generics.RetrieveUpdateDestroyAPIView):
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-class UserDetails(generics.RetriveApiViews):
+class UserDetails(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer 
     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
