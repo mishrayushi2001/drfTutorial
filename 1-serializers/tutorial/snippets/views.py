@@ -14,6 +14,7 @@ from rest_framework.response import Response
 from django.http import Http404
 from rest_framework import generics, mixins
 from django.contrib.auth.models import User
+from snippets.permissions import IsOwnerOrReadOnly
 # @csrf_exempt
 # @api_view(['GET','POST'])
 # class SnippetList(APIView):
@@ -127,3 +128,5 @@ class UserList(generics.ListAPIView):
 class UserDetails(generics.RetriveApiViews):
     queryset = User.objects.all()
     serializer_class = UserSerializer 
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,
+                      IsOwnerOrReadOnly]
