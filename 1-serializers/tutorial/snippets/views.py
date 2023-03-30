@@ -1,3 +1,4 @@
+from snippets.serializers import UserSerializer
 from django.shortcuts import render
 
 from django.http import HttpResponse, JsonResponse
@@ -6,11 +7,14 @@ from django.http import HttpResponse, JsonResponse
 from snippets.models import Snippet
 from snippets.serializers import SnippetSerializer
 from rest_framework import status
+from rest_framework import permissions
 # from rest_framework.decorators import api_view
 from rest_framework.decorators import APIView
 from rest_framework.response import Response
 from django.http import Http404
 from rest_framework import generics, mixins
+from django.contrib.auth.models import User
+from snippets.permissions import IsOwnerOrReadOnly
 # @csrf_exempt
 # @api_view(['GET','POST'])
 # class SnippetList(APIView):
@@ -109,8 +113,20 @@ from rest_framework import generics, mixins
 class SnippetList(generics.ListCreateAPIView):
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
-
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+def perform_create(self, serializer):
+    serializer.save(owner=self.request.user)
 
 class SnippetDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+class UserDetails(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer 
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,
+                      IsOwnerOrReadOnly]
